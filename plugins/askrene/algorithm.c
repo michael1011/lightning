@@ -265,6 +265,9 @@ bool simple_feasibleflow(const tal_t *ctx,
 			 s64 *capacity,
 			 s64 amount)
 {
+	if (amount == 0)
+		return false;
+
 	const tal_t *this_ctx = tal(ctx, tal_t);
 	assert(graph);
 	const size_t max_num_arcs = graph_max_num_arcs(graph);
