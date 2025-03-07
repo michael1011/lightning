@@ -317,10 +317,15 @@ static struct amount_msat flow_remaining_capacity(const struct route_query *rq,
 	flow_max_capacity(rq, flow, &max, NULL, NULL);
 	create_flow_reservations(rq, reservations, flow);
 
-	if (!amount_msat_sub(&diff, max, flow->delivers))
-		plugin_err(rq->plugin, "Flow delivers %s but max only %s",
-			   fmt_amount_msat(tmpctx, flow->delivers),
-			   fmt_amount_msat(tmpctx, max));
+	if (!amount_msat_sub(&diff, max, flow->delivers)) {
+		rq_log(tmpctx, rq, LOG_UNUSUAL,
+		       "Flow delivers %s but max only %s",
+		       fmt_amount_msat(tmpctx, flow->delivers),
+		       fmt_amount_msat(tmpctx, max));
+
+		diff = AMOUNT_MSAT(0);
+	}
+
 
 	return diff;
 }
