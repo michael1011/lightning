@@ -471,8 +471,11 @@ static void combine_cost_function(const tal_t *working_ctx,
 		int chandir;
 		s32 bias;
 
-		assert(fcost != INFINITE);
-		assert(pcost != DBL_MAX);
+
+		/* FIXME: This shouldn't happen, but don't crash if it does. */
+		if (fcost == INFINITE || pcost == DBL_MAX)
+			continue;
+
 		combined = fcost*mu + (MU_MAX-mu)*pcost*k;
 
 		/* Bias is in human scale, where "bigger is better" */

@@ -445,9 +445,12 @@ static bool increase_flows(const struct route_query *rq,
 			if (amount_msat_greater(capacity, ceiling[i]))
 				capacity = ceiling[i];
 
-			if (!amount_msat_sub(&remaining, capacity, flows[i]->delivers))
-				abort();
-			if (amount_msat_greater(remaining, best_remaining)) {
+			/* We've had a report that this subtract can fail:
+			 * that implies we've pushed a flow past its estimated
+			 * capacity.  That shouldn't happen, but if it does,
+			 * we don't crash */
+			if (amount_msat_sub(&remaining, capacity, flows[i]->delivers)
+			    && amount_msat_greater(remaining, best_remaining)) {
 				best_flownum = i;
 				best_remaining = remaining;
 			}
